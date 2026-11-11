@@ -28,11 +28,13 @@ jobs:
       TRAFFIC_DATA_DIR: ${{ inputs.data-dir }}
     steps:
       # Reusable workflows do not implicitly make their own scripts available.
-      - name: Get central implementation (public repository, main channel)
+      # Scripts come from the exact commit of this called workflow, so a caller's
+      # full-SHA pin covers both the workflow definition and its scripts.
+      - name: Get central implementation (same commit as this workflow)
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           repository: pacappkor/.github
-          ref: main
+          ref: ${{ job.workflow_sha }}
           persist-credentials: false
       - name: Preserve trusted implementation outside caller working tree
         shell: bash

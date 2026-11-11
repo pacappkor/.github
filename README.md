@@ -33,7 +33,7 @@ Traffic API(`/traffic/views?per=day`, `/traffic/clones?per=day`)는 Administrati
 - 저장소별 concurrency로 동시 집계를 직렬화합니다. 외부 수동 push와 경합하면 일반 push가 실패하므로 재실행합니다. 과거 데이터는 강제로 덮어쓰지 않습니다.
 - 선택 입력은 `branch`(기본 `traffic`)와 `data-dir`(기본 `.traffic`)입니다. 바꾸면 배지 URL도 바꿉니다. 경로는 상대 디렉터리여야 하며 루트, `.git`, 상위 경로, symlink를 허용하지 않습니다. 운영 중 경로를 바꾸면 이전 이력의 수동 이전이 필요합니다.
 
-재사용 워크플로는 호출 저장소의 파일이 아니라 중앙 공개 저장소의 `scripts/`를 먼저 가져와 임시 경로에 보관한 뒤 실행합니다. 따라서 호출 저장소에는 Python 코드를 복사할 필요가 없습니다. `@main`은 중앙 업데이트를 자동 반영하는 신뢰 채널이며, 중앙 main 변경 권한을 제한하고 리뷰해야 합니다. checkout/setup-python 액션은 full SHA로 고정했습니다.
+재사용 워크플로는 호출 저장소의 파일이 아니라 중앙 공개 저장소의 `scripts/`를 먼저 가져와 임시 경로에 보관한 뒤 실행합니다. 따라서 호출 저장소에는 Python 코드를 복사할 필요가 없습니다. 호출 저장소는 재사용 워크플로를 **검토된 full commit SHA**로 고정하고, 재사용 워크플로는 `job.workflow_sha`(호출된 워크플로와 같은 commit)에서 `scripts/`를 가져옵니다. 따라서 중앙 main이 바뀌어도 고정을 명시적으로 올리기 전에는 각 저장소에서 실행되지 않습니다. checkout/setup-python 액션은 full SHA로 고정했습니다.
 
 ## 한계와 운영
 

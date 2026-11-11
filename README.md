@@ -57,3 +57,10 @@ python -I -B -m unittest discover -s tests -v
 ## 라이선스
 
 [GNU GPL version 3 only](LICENSE), SPDX `GPL-3.0-only`. 각 소스 파일의 SPDX 헤더가 적용 버전을 명시합니다.
+
+## 운영상 한계: 예약 실행 자동 비활성화
+
+GitHub는 공개 저장소에서 60일 동안 저장소 활동이 없으면 예약(`schedule`) 워크플로를 자동으로 비활성화합니다. 그러면 조회·클론이 계속 있어도 집계가 멈춥니다. `workflow_dispatch`가 있다고 해서 비활성화된 워크플로가 다시 켜지지는 않습니다.
+
+- 배지 값이 오랫동안 바뀌지 않으면 해당 저장소의 **Actions → Daily traffic**이 비활성화되었는지 확인합니다. 비활성화되었다면 **Enable workflow**를 누른 뒤 수동으로 한 번 실행합니다.
+- GitHub traffic API는 최근 14일만 제공합니다. 14일을 넘겨 멈추면 그 사이의 일별 값은 복구할 수 없고 누적치에 빠집니다.

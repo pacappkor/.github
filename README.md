@@ -57,3 +57,19 @@ python -I -B -m unittest discover -s tests -v
 ## 라이선스
 
 [GNU GPL version 3 only](LICENSE), SPDX `GPL-3.0-only`. 각 소스 파일의 SPDX 헤더가 적용 버전을 명시합니다.
+
+## 운영상 한계: 예약 실행 자동 비활성화
+
+GitHub는 공개 저장소에서 60일 동안 저장소 활동이 없으면 예약(`schedule`) 워크플로를 자동으로 비활성화합니다. 그러면 조회·클론이 계속 있어도 집계가 멈춥니다. `workflow_dispatch`가 있다고 해서 비활성화된 워크플로가 다시 켜지지는 않습니다.
+
+- 배지 값이 오랫동안 바뀌지 않으면 해당 저장소의 **Actions → Daily traffic**이 비활성화되었는지 확인합니다. 비활성화되었다면 **Enable workflow**를 누른 뒤 수동으로 한 번 실행합니다.
+- GitHub traffic API는 최근 14일만 제공합니다. 14일을 넘겨 멈추면 그 사이의 일별 값은 복구할 수 없고 누적치에 빠집니다.
+
+## 위협 모델: `TRAFFIC_TOKEN`
+
+- `TRAFFIC_TOKEN`은 조직 secret입니다. 권한은 fine-grained **Administration: read-only** 하나뿐이고, traffic API 읽기에만 씁니다. contents·secrets·workflow 쓰기 권한은 없습니다.
+- 브랜치에서 workflow를 바꿀 수 있는 쓰기 권한자는 `workflow_dispatch`를 쓰지 않아도 `on: push` workflow로 같은 secret에 접근할 수 있습니다. 따라서 트리거 제거는 경계가 아닙니다. 실제 경계는 다음 두 가지입니다.
+  1. 조직 저장소 쓰기 권한은 운영 계정 하나로 제한합니다.
+  2. 토큰 권한은 위와 같이 최소로 유지합니다.
+- 외부 기여자(fork PR)에게는 secret이 전달되지 않습니다. caller의 트리거는 `schedule`과 `workflow_dispatch`뿐입니다.
+- 쓰기 권한자가 늘면 secret 노출 위험도 커집니다. 그 경우 토큰을 저장소별 environment secret(배포 브랜치 `main` 한정)으로 옮기고, 재사용 워크플로 job에 `environment:`를 지정합니다.
